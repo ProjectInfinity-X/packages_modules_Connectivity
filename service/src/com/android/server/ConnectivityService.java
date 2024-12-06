@@ -220,6 +220,7 @@ import android.net.NetworkInfo;
 import android.net.NetworkInfo.DetailedState;
 import android.net.NetworkMonitorManager;
 import android.net.NetworkPolicyManager;
+import android.net.NetworkPolicyManager.AllowedTransportsCallback;
 import android.net.NetworkPolicyManager.NetworkPolicyCallback;
 import android.net.NetworkProvider;
 import android.net.NetworkRequest;
@@ -2242,6 +2243,7 @@ public class ConnectivityService extends IConnectivityManager.Stub
         if (!shouldTrackUidsForBlockedStatusCallbacks()) {
             mPolicyManager.registerNetworkPolicyCallback(null, mPolicyCallback);
         }
+        mPolicyManager.registerAllowedTransportsCallback(null, mAllowedTransportsCallback);
 
         final PowerManager powerManager = (PowerManager) context.getSystemService(
                 Context.POWER_SERVICE);
@@ -3767,7 +3769,10 @@ public class ConnectivityService extends IConnectivityManager.Stub
                     EVENT_BLOCKED_REASONS_CHANGED,
                     List.of(new Pair<>(uid, blockedReasons))));
         }
+    };
 
+    private final AllowedTransportsCallback mAllowedTransportsCallback =
+            new AllowedTransportsCallback() {
         @Override
         public void onUidsAllowedTransportsChanged(int[] uids, long[] allowedTransports) {
             setUidsAllowedTransports(uids, allowedTransports);
